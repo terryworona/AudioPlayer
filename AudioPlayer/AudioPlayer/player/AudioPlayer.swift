@@ -80,7 +80,7 @@ public class AudioPlayer: NSObject {
     }
     
     /// If enabled, will fade in/out any audio item added to the queue.
-    public var fadeAudioItems: Bool = false
+    public var fadeInAudioItems: Bool = false
 
     /// The current item being played.
     public internal(set) var currentItem: AudioItem? {
@@ -119,8 +119,8 @@ public class AudioPlayer: NSObject {
                 player = AVPlayer(playerItem: playerItem)
 
                 //Fade
-                if self.fadeAudioItems {
-                    playerItem.enableFade()
+                if self.fadeInAudioItems {
+                    playerItem.enableFadeIn()
                 }
                 
                 currentQuality = info.quality
@@ -446,17 +446,13 @@ extension AudioPlayer: EventListener {
 
 extension AVPlayerItem {
     /// Enables fade in/out on the first and last second of the AVPlayerItem.
-    func enableFade() {
+    func enableFadeIn() {
         if let track = self.asset.tracks.first {
-            let duration = self.asset.duration
-            let durationInSeconds = CMTimeGetSeconds(duration)
             let params = AVMutableAudioMixInputParameters(track: track as AVAssetTrack)
 
             let firstSecond = CMTimeRangeMake(start: CMTimeMakeWithSeconds(0, preferredTimescale: 1), duration: CMTimeMakeWithSeconds(1, preferredTimescale: 1))
-            let lastSecond = CMTimeRangeMake(start: CMTimeMakeWithSeconds(durationInSeconds - 1, preferredTimescale: 1), duration: CMTimeMakeWithSeconds(1, preferredTimescale: 1))
 
             params.setVolumeRamp(fromStartVolume: 0, toEndVolume: 1, timeRange: firstSecond)
-            params.setVolumeRamp(fromStartVolume: 1, toEndVolume: 0, timeRange: lastSecond)
 
             let mix = AVMutableAudioMix()
             mix.inputParameters = [params]
