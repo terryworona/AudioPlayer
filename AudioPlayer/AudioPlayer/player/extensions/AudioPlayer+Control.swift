@@ -30,13 +30,8 @@ extension AudioPlayer {
 
     /// Pauses the player.
     public func pause() {
-        if self.fadeAudioItems {
-            self.fadeOut(andRemoveItem: false)
-        } else {
-            player?.rate = 0
-        }
-
         //We ensure the player actually pauses
+        player?.rate = 0
         state = .paused
 
         retryEventProducer.stopProducingEvents()
@@ -88,12 +83,8 @@ extension AudioPlayer {
         retryEventProducer.stopProducingEvents()
 
         if let _ = player {
-            if self.fadeAudioItems {
-                self.fadeOut(andRemoveItem: true)
-            } else {
-                player?.rate = 0
-                player = nil
-            }
+            player?.rate = 0
+            player = nil
         }
         if let _ = currentItem {
             currentItem = nil
@@ -233,26 +224,4 @@ extension AudioPlayer {
                         self?.updateNowPlayingInfoCenter()
         })
     }
-    
-    fileprivate func fadeOut(andRemoveItem removeItem: Bool) {
-        if let _player = self.player {
-            func quieter() {
-                if _player.volume > 0.1 {
-                    _player.volume = _player.volume - 0.05
-                    let dispatchTime = DispatchTime.now() + 0.1
-                    DispatchQueue.main.asyncAfter(deadline: dispatchTime) {
-                        quieter()
-                    }
-                 } else {
-                    _player.rate = 0
-                    
-                    if removeItem {
-                        player = nil
-                    }
-                 }
-            }
-            quieter()
-        }
-    }
-    
 }
