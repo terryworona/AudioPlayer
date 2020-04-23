@@ -446,7 +446,6 @@ extension AudioPlayer: EventListener {
 
 extension AVPlayerItem {
     /// Enables fade in/out on the first and last second of the AVPlayerItem.
-    /// To clear, simply call disableFade() which will clear the audio mix.
     func enableFade() {
         if let track = self.asset.tracks.first {
             let duration = self.asset.duration
